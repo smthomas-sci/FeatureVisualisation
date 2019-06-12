@@ -1,6 +1,20 @@
 # FeatureVisualization
 A module to generate feature visualisations for Keras models
 
-**example:**
-![Ouzel](https://github.com/smthomas-sci/FeatureVisualization/blob/master/examples/VGG16_ouzel.png)
+**African Elephant:**
+
+![Ouzel](./examples/elephant.gif)
+
+### VGG-16
+
+**Ouzel:**
+
 ![Ouzel](./examples/VGG16_ouzel.png)
+
+**Tree Frog:**
+
+![Ouzel](./examples/VGG16_treefrog.png)
+
+**Corn:**
+
+![Ouzel](./examples/VGG16_corn.png)
