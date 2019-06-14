@@ -19,115 +19,11 @@ import keras
 from keras.models import Model
 import keras.backend as K
 
-from skimage.transform import rescale, resize
-from skimage.filters import gaussian
 
 import numpy as np
 import matplotlib.pyplot as plt
 
-from sys import maxsize as infinity
-
-
-class Utils(object):
-    """
-    A class that provides useful functions
-    """
-    @staticmethod
-    def deprocess_image(x):
-        """
-        Converts the (-inf, inf) image to have range 0-255.
-
-        Input:
-            x - image as numpy array
-
-        Output:
-            x - image a numpy array
-        """
-        x -= x.mean()
-        x /= (x.std() + 1e-5)
-        x *= 0.1
-
-        x += 0.5  # Clips to [0, 1]
-        x = np.clip(x, 0, 1)
-
-        x *= 255
-        x = np.clip(x, 0, 255).astype('uint8')  # Converts to RGB array
-        return x
-
-    # Regularization Functions
-    @staticmethod
-    def L1(tensor, _lambda):
-        """
-        Returns the L1 norm of the input tensor weighted by lambda
-        """
-        return _lambda * K.sum(K.abs(tensor))
-
-    @staticmethod
-    def L2(tensor, _lambda):
-        """
-        Returns the L2 norm of the input tensor weighted by lambda
-        """
-        return _lambda * K.sum(K.square(tensor))
-
-
-class Jitter(object):
-    def __init__(self, size, frequency = 2):
-        """
-        Initialized with a jitter size and frequency to
-        apply it
-        """
-        self.size = size
-        self.frequency = frequency
-
-    def __call__(self, image, step):
-        """
-        Jitters the input image
-        """
-        if step % self.frequency == 0:
-            ox, oy = np.random.randint(-self.size, self.size + 1, 2)
-            return np.roll(np.roll(image, ox, -1), oy, -2)
-        # Don't do anything
-        return image
-
-
-class Blur(object):
-    def __init__(self, sigma, frequency=5):
-        """
-        Initialized with a sigma and frequency to apply it
-        """
-        self.sigma = sigma
-        self.frequency = frequency
-
-    def __call__(self, image, step):
-        """
-        Blurs the input image
-        """
-        if step % self.frequency == 0:
-            return gaussian(image[0], self.sigma)[np.newaxis, ::]
-        # Don't do anything
-        return image
-
-
-class Scale(object):
-    def __init__(self, frequency=10, end=infinity):
-        """Initialized with a frequency and when to stop applying it"""
-        self.frequency = frequency
-        self.end = end
-
-    def __call__(self, image, step):
-        """
-        Randomly scales the input image
-        """
-        if step % self.frequency == 0 and step < self.end:
-            ref_shape = image.shape
-            pos = np.random.randint(0, 3)
-            scales = [1, 1.0025, 1.001]
-            image = rescale(image[0], scales[pos])[0:dim, 0:dim][np.newaxis, ::]
-            if image.shape != ref_shape:
-                image = resize(image[0], (224, 224))[np.newaxis, ...]
-            return image
-        # Don't do anything
-        return image
+from regularizers import *
 
 
 class Visualizer(object):
@@ -141,20 +37,26 @@ class Visualizer(object):
         self.model = model
         self._loss_is_set = False
         self.feeder = None
+        self.objective = None
 
     def __repr__(self):
         return "Feature Visualizer - model: " + str(self.model.name)
 
-    def set_layer_filter(self, layer_names, filter_idxs, weights=[1.], regularizer=(Utils.L1, 0.1), activation=False):
+    def set_layer_filter(self, layer_names, filter_idxs, rows=None, cols=None, channels=None,  weights=[1.], regularizer=(L1, 0.1), activation=False):
         """
         Sets the loss function to optimize
 
-        ATTENTION - CURRENTLY ONLY WORKS FOR FINAL PREDICTIONS LAYER and MULTI-LOSS NOT TESTED
+        ATTENTION - MULTI-LOSS NOT TESTED
 
         Input:
             layer_name - layer name or list of layer name of model to measure
-            filter - filter or list of filtto check activation
+            filter_idxs - filter or list of filters to get activation
+            rows - row start and end [5, 10] == tensor[5:10, :, :]
+            cols - col start and end [5, 10] == tensor[:, 5:10, :]
+            channels - channel start and end [5, 10] == tensor[:, :, 5:10]
+            weights - list of weights to balance a multi layered loss
             regularizer - Either L1 or L2 function with lambda as tuple. default (L1, 0.1)
+            activation - whether to include the activation function. By default False to use logits
 
         """
         # Check for single term loss
@@ -177,14 +79,32 @@ class Visualizer(object):
                 w = 1
             else:
                 w = weights[i]
-            loss += K.mean(layer_output[0, filter_idxs[i]]) * w
+
+            # Create the loss tensor
+            # <= 3D layer
+            if rows or cols:
+                if channels:
+                    loss_tensor = layer_output[0, rows[0]:rows[-1], cols[0]:cols[-1], channels[0]:channels[-1]]
+                else:
+                    # <= 2D layer
+                    loss_tensor = layer_output[0, rows[0]:rows[-1], cols[0]:cols[-1], filter_idxs[i]]
+            else:
+
+                if len(layer_output.shape) == 2:
+                    # = 1D layer - only for Dense layers such as "predictions"
+                    loss_tensor = layer_output[0, filter_idxs[i]]
+                else:
+                    # =2D layer - want the whole activation
+                    loss_tensor = layer_output[0, :, :, filter_idxs[i]]
+
+            loss += K.mean(loss_tensor) * w
 
             # Add a regularization term to the loss
             if regularizer:
                 func = regularizer[0]
                 _lambda = regularizer[1]
 
-                loss -= func(layer_output[0, filter_idxs[i]], -_lambda)
+                loss -= func(loss_tensor, -_lambda)
 
         # Create backend function to get grads
         gradients = K.gradients(loss, self.model.get_input_at(0))[0]
@@ -196,6 +116,7 @@ class Visualizer(object):
 
         # Signal loss
         self._loss_is_set = True
+        self.objective = "Objective - Layer(s) = " + str(layer_names) + " - neuron/filters(s) =  " + str(filter_idxs)
 
     def optimize(self, max_iter=200, transforms=[], learning_rate=6000, verbose=True, maximize=True,
                  l2_lambda=0.0001, gradient_blur_sigma=0.1):
@@ -219,7 +140,7 @@ class Visualizer(object):
         dim = self.model.input.shape[1]
         input_img_data = np.random.random((1, dim, dim, 3))*20
 
-        print("Optimizing on loss objective...")
+        print("Optimizing on loss objective...", self.objective)
 
         # Optimize
         for step in range(max_iter):
@@ -245,7 +166,8 @@ class Visualizer(object):
 
             if verbose:
                 # Print progress
-                print("Step {0} of {1} - Loss = {2}".format(step+1, max_iter, loss_value))
+                if step % 10 == 0:
+                    print("Step {0} of {1} - Loss = {2}".format(step+1, max_iter, loss_value))
 
             # Perform robustness transforms
             for transform in transforms:
@@ -261,6 +183,8 @@ if __name__ == "__main__":
 
     from keras.applications.vgg16 import VGG16
 
+    import skimage.io as io
+
     # Load the model to visualize
     dim = 224
     model = VGG16(input_shape=(dim, dim, 3), include_top=True, weights='imagenet')
@@ -268,19 +192,41 @@ if __name__ == "__main__":
     # Create visualizer
     visualizer = Visualizer(model)
 
-    # Set which layer / filters to maximize
-    visualizer.set_layer_filter("predictions", 20,
-                                weights=[1.],
-                                regularizer=(Utils.L1, 0.1),
-                                activation=False
-                                )
+    # -------------- CLASS ACTIVATIONS -------------- #
 
-    # Optimize for 300 steps and apply transformations
-    image = visualizer.optimize(max_iter=300,
-                                transforms=[Blur(1), Jitter(2), Scale(10)]
-                                )
-    plt.imshow(image)
-    plt.show()
+    # # Set which layer / filters to maximize
+    # visualizer.set_layer_filter("predictions", 20,
+    #                             weights=[1.],
+    #                             regularizer=(L1, 0.1),
+    #                             activation=False
+    #                             )
+    #
+    # # Optimize for 300 steps and apply transformations
+    # image = visualizer.optimize(max_iter=300,
+    #                             transforms=[
+    #                                 Blur(1), Jitter(2), Scale(10)
+    #                             ])
+    # # ------------------------------------------------ #
+
+    # -------------- FILTER ACTIVATIONS -------------- #
+
+    for i in range(512):
+        # Set which layer / filters to maximize
+        visualizer.set_layer_filter("block5_pool", [i],
+                                    regularizer=(L1, 0.1),
+                                    activation=False
+                                    )
+
+        # Optimize for 300 steps and apply transformations
+        image = visualizer.optimize(max_iter=600,
+                                    transforms=[
+                                        Blur(1), Jitter(2), Scale(10)
+                                    ],
+                                    learning_rate=0.05)
+
+        # Save image
+        print("Saving...")
+        io.imsave("./block5_pool/block5_pool_filter_{0}.png".format(i), image)
 
 
 
