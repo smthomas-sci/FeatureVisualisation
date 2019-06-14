@@ -17,36 +17,6 @@ from skimage.filters import gaussian
 import keras.backend as K
 
 
-
-
-
-class Utils(object):
-    """
-    A class that provides useful functions
-    """
-    @staticmethod
-    def deprocess_image(x):
-        """
-        Converts the (-inf, inf) image to have range 0-255.
-
-        Input:
-            x - image as numpy array
-
-        Output:
-            x - image a numpy array
-        """
-        x -= x.mean()
-        x /= (x.std() + 1e-5)
-        x *= 0.1
-
-        x += 0.5  # Clips to [0, 1]
-        x = np.clip(x, 0, 1)
-
-        x *= 255
-        x = np.clip(x, 0, 255).astype('uint8')  # Converts to RGB array
-        return x
-
-
 # Regularization Functions
 def L1(tensor, _lambda):
     """

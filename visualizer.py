@@ -14,16 +14,8 @@ Date: 12th June, 2019
 
 """
 
-
-import keras
-from keras.models import Model
-import keras.backend as K
-
-
-import numpy as np
-import matplotlib.pyplot as plt
-
 from regularizers import *
+from utilities import *
 
 
 class Visualizer(object):
@@ -174,7 +166,7 @@ class Visualizer(object):
                 input_img_data = transform(input_img_data, step)
 
         # De-process image
-        optimised_image = Utils.deprocess_image(input_img_data[0])
+        optimised_image = deprocess_image(input_img_data[0])
 
         return optimised_image
 
@@ -223,7 +215,6 @@ if __name__ == "__main__":
                                         Blur(1), Jitter(2), Scale(10)
                                     ],
                                     learning_rate=0.05)
-
         # Save image
         print("Saving...")
         io.imsave("./block5_pool/block5_pool_filter_{0}.png".format(i), image)
