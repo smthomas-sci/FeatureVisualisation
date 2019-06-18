@@ -204,7 +204,7 @@ if __name__ == "__main__":
 
     # -------------- FILTER ACTIVATIONS -------------- #
 
-    for i in [336]:#range(512):
+    for i in [351]:#range(512):
         # Set which layer / filters to maximize
         visualizer.set_layer_filter("block5_pool", [i],
                                     regularizer=(L1, 0.1),
