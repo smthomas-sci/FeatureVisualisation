@@ -111,7 +111,7 @@ class Visualizer(object):
         self.objective = "Objective - Layer(s) = " + str(layer_names) + " - neuron/filters(s) =  " + str(filter_idxs)
 
     def optimize(self, max_iter=200, transforms=[], learning_rate=6000, verbose=True, maximize=True,
-                 l2_lambda=0.0001, gradient_blur_sigma=0.1):
+                 l2_lambda=0.0001, gradient_blur_sigma=0.1, image_dim=None):
         """
         Optimize for the pre-set loss. Raises exception if no loss function is set.
 
@@ -130,6 +130,8 @@ class Visualizer(object):
 
         # Generate random input image
         dim = self.model.input.shape[1]
+        if dim == None and image_dim:
+            dim = image_dim
         input_img_data = np.random.random((1, dim, dim, 3))*20
 
         print("Optimizing on loss objective...", self.objective)
@@ -178,9 +180,9 @@ if __name__ == "__main__":
     import skimage.io as io
 
     # Load the model to visualize
-    dim = 224
-    model = VGG16(input_shape=(dim, dim, 3), include_top=True, weights='imagenet')
-
+    dim = 1024
+    #model = VGG16(input_shape=(dim, dim, 3), include_top=True, weights='imagenet')
+    model = VGG16(input_shape=(dim, dim, 3), include_top=False, weights='imagenet')
     # Create visualizer
     visualizer = Visualizer(model)
 
@@ -202,7 +204,7 @@ if __name__ == "__main__":
 
     # -------------- FILTER ACTIVATIONS -------------- #
 
-    for i in range(512):
+    for i in [336]:#range(512):
         # Set which layer / filters to maximize
         visualizer.set_layer_filter("block5_pool", [i],
                                     regularizer=(L1, 0.1),
@@ -217,7 +219,8 @@ if __name__ == "__main__":
                                     learning_rate=0.05)
         # Save image
         print("Saving...")
-        io.imsave("./block5_pool/block5_pool_filter_{0}.png".format(i), image)
+        #io.imsave("./block5_pool/block5_pool_filter_{0}.png".format(i), image)
+        io.imsave("./block5_pool_filter_{0}.png".format(i), image)
 
 
 

@@ -18,3 +18,8 @@ A module to generate feature visualisations for Keras models
 **Corn:**
 
 ![Ouzel](./examples/VGG16_corn.png)
+
+
+**Block 5 - Pooling - Filter 336**
+
+![Block 5 - Pooling - Filer 336](./examples/VGG16_block5_pool_filter_336.png)
