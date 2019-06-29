@@ -17,11 +17,14 @@
 
         #viewer {
             position: fixed;
-            right: 10%;
+            right: 5%;
             top: 20%;
             width: 224px;
             height: 224px;
-
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-bottom: 40px;
+            background: white;
         }
 
         #viewer_filter_name {
@@ -36,11 +39,12 @@
             color: white;
             opacity: 0.9;
             padding: 2px;
+
         }
 
         .filter_block {
             margin: auto;
-            width : 612px;
+            width : 696px;
         }
 
         #block5_pool {
@@ -50,14 +54,15 @@
         .tile {
             width: 30px;
             height: 30px;
-            margin: 4px;
+            margin: 6px;
             display: inline-block;
             opacity: 0.7;
         }
 
         .tile:hover {
-            transform: scale(1.3);
+            transform: scale(1.2);
             opacity: 1;
+            border: solid orangered 2px;
         }
 
     </style>
@@ -68,13 +73,8 @@
 
 <body>
 
+
 <h1>VGG16  Filter Visualisation</h1>
-<div id="viewer">
-    <p id="viewer_filter_name">Filter : NA</p>
-    <img id="viewer_img" src="./images/block5_pool/block5_pool_filter_167.png" alt="">
-</div>
-
-
 
 <div id="filter_container">
 
@@ -82,6 +82,14 @@
         <h3>block5_pool</h3>
         <!-- all divs will append here -->
     </div>
+</div>
+
+
+
+
+<div id="viewer">
+    <p id="viewer_filter_name">Filter : NA</p>
+    <img id="viewer_img" src="./images/block5_pool/block5_pool_filter_167.png" alt="">
 </div>
 
 
