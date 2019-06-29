@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>FeatureVisualisation</title>
 
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
 
@@ -12,13 +14,44 @@
 
         body {
             text-align: center;
-            font-family: Arial;
+            font-family: Roboto;
+        }
+
+        .paragraphs {
+            width: 80%;
+            margin: auto;
+            text-align: left;
+            line-height: 26px; /* 4px +12px + 4px */
+            font-size: 18px;
+        }
+
+
+        code {
+            background: ghostwhite;
+            display: block;
+            white-space: pre-wrap;
+            width: 80%;
+        }
+
+        #filter_container {
+            margin: auto;
+            width: 80%;
+        }
+
+        .flex_containter {
+            display: flex;
+            /*justify-content: space-around;*/
+            align-items: flex-start;
+
+        }
+
+        a:link {
+            text-decoration: none;
         }
 
         #viewer {
-            position: fixed;
-            right: 5%;
-            top: 20%;
+            position: sticky;
+            top: 4rem;
             width: 224px;
             height: 224px;
             padding-left: 20px;
@@ -28,8 +61,8 @@
         }
 
         #viewer_filter_name {
-            margin: 0px;
-            padding: 0px;
+            margin: 0;
+            padding: 0;
             text-align: left;
             position: relative;
             width : 80px;
@@ -44,13 +77,11 @@
 
         .filter_block {
             margin: auto;
-            width : 696px;
+            max-width : 696px;
+            min-with: 200px;
         }
 
-        #block5_pool {
-            margin: auto;
 
-        }
         .tile {
             width: 30px;
             height: 30px;
@@ -74,23 +105,57 @@
 <body>
 
 
-<h1>VGG16  Filter Visualisation</h1>
+<h1>Feature Visualisation</h1>
+
+<div class="paragraphs">
+    <p>
+        Feature Visualisation (or Filter Visualisation), is an interpretability method for understanding CNNs.
+        It works by using gradient descent to iteratively generate an input image that maximises the output of a
+        given neuron(s). This methods has been widely studied since 2015, and although many would consider the problem
+        solved, a brief exploration of both formal and informal publications should raise most people's
+        suspicions of a reproducibility problem. Results vary depending on frameworks (Theano, Caffe, Tensorflow,
+        Keras and PyTorch) as well as network architectures (Inception V1-V3, ResNet-50, VGG16 etc).
+
+    </p>
+    <p>
+        In wanting to develop interpretability methods I've attempted to reproduce the work of various
+        researchers, culminating in my own <a href="https://github.com/smthomas-sci/FeatureVisualisation">FeatureVisualisation</a>
+        module using Keras. In doing so I've discovered first-hand the challenges facing reproducibility, specifically
+        the difficulty in transferring methods to other networks. In my case, I've kept to the narrow path of intuition
+        that we have for deep learning, focusing specifically on the straight-forward yet powerful VGG-16 network. The
+        following are optimised input images for the 512 in the block5_pool layer.
+    </p>
+    
+</div>
+
+
 
 <div id="filter_container">
 
-    <div class="filter_block" id="block5_pool">
-        <h3>block5_pool</h3>
-        <!-- all divs will append here -->
+    <div class="flex_containter">
+        <div class="filter_block" id="block5_pool">
+            <h3>block5_pool</h3>
+            <!-- all divs will append here -->
+        </div>
+
+        <div id="viewer">
+            <p id="viewer_filter_name">Filter : NA</p>
+            <img id="viewer_img" src="./images/block5_pool/block5_pool_filter_167.png" alt="">
+        </div>
     </div>
+
+</div>
+
+
+<div class="paragraphs">
+    <h3>References:</h3>
+    <ol>
+        <li>Keras, VGG16</li>
+    </ol>
 </div>
 
 
 
-
-<div id="viewer">
-    <p id="viewer_filter_name">Filter : NA</p>
-    <img id="viewer_img" src="./images/block5_pool/block5_pool_filter_167.png" alt="">
-</div>
 
 
 <!-- SCRIPTS -->
