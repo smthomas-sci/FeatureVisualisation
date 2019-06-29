@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FeatureVisualisation</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+
+    <style>
+
+
+        body {
+            text-align: center;
+            font-family: Arial;
+        }
+
+        #viewer {
+            position: fixed;
+            right: 10%;
+            top: 20%;
+            width: 224px;
+            height: 224px;
+
+        }
+
+        #viewer_filter_name {
+            margin: 0px;
+            padding: 0px;
+            text-align: left;
+            position: relative;
+            width : 80px;
+            left: 0px;
+            top: 22px;
+            background: grey;
+            color: white;
+            opacity: 0.9;
+            padding: 2px;
+        }
+
+        .filter_block {
+            margin: auto;
+            width : 612px;
+        }
+
+        #block5_pool {
+            margin: auto;
+
+        }
+        .tile {
+            width: 30px;
+            height: 30px;
+            margin: 4px;
+            display: inline-block;
+            opacity: 0.7;
+        }
+
+        .tile:hover {
+            transform: scale(1.3);
+            opacity: 1;
+        }
+
+    </style>
+
+
+</head>
+
+
+<body>
+
+<h1>VGG16  Filter Visualisation</h1>
+<div id="viewer">
+    <p id="viewer_filter_name">Filter : NA</p>
+    <img id="viewer_img" src="./images/block5_pool/block5_pool_filter_167.png" alt="">
+</div>
+
+
+
+<div id="filter_container">
+
+    <div class="filter_block" id="block5_pool">
+        <h3>block5_pool</h3>
+        <!-- all divs will append here -->
+    </div>
+</div>
+
+
+<!-- SCRIPTS -->
+<script>
+
+    String.prototype.format = function() {
+        a = this;
+        for (k in arguments) {
+            a = a.replace("{" + k + "}", arguments[k])
+        }
+        return a
+    }
+
+
+    //
+    let target_div = document.getElementById("block5_pool");
+    for(var i=0; i < 512; i++){
+
+        // Add new image to this div
+        let image = document.createElement('img');
+        image.src = "./images/block5_pool/block5_pool_filter_{0}.png".format(i);
+        image.id = "r" + i;
+        image.className = "tile";
+        image.content = i;
+
+
+        target_div.appendChild(image);
+        //    Now add tooltip to div
+        let tooltip = document.createElement('h1');
+        tooltip.className = "tooltip";
+        tooltip.innerHTML = "Filter : {0}".format(i);
+        image.appendChild(tooltip);
+
+    }
+
+</script>
+
+<script>
+    var orig_img = "./images/block5_pool/block5_pool_filter_167.png";
+    $(".tile").on({
+
+        mouseenter: function() {
+            var src = $(this).attr('src');
+            var i = $(this).attr('id').substring(1);
+
+            $("#viewer_img").prop("src", src);
+            $("#viewer_filter_name").text("Filter : " + i);
+        }
+    })
+</script>
+
+
+
+
+</body>
+</html>
