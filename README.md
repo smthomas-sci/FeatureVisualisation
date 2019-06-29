@@ -15,10 +15,6 @@ A module to generate feature visualisations for Keras models
 
 ![Ouzel](./examples/VGG16_treefrog.png)
 
-**Corn:**
-
-![Ouzel](./examples/VGG16_corn.png)
-
 
 **Block 5 - Pooling - Filter 336**
 
@@ -28,8 +24,4 @@ A module to generate feature visualisations for Keras models
 **Block 5 - Pooling - Filter 351**
 
 ![Block 5 - Pooling - Filer 351](./examples/VGG16_block5_pool_filter_351.png)
-
-**Block 5 - Pooling - All Filters**
-
-![Block 5 - Pooling - Filer 351](./examples/VGG16_all_filters.png)
 
