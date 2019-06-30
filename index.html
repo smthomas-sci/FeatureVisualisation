@@ -11,11 +11,22 @@
 
     <style>
 
-
         body {
             text-align: center;
             font-family: Roboto;
         }
+
+        .loader {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: url('https://lkp.dispendik.surabaya.go.id/assets/loading.gif') 50% 50% no-repeat rgb(249, 249, 249);
+        }
+
+
 
         .paragraphs {
             width: 80%;
@@ -104,6 +115,12 @@
 
 <body>
 
+<!-- OVERLAY FOR LOADING-->
+<div class="loader">
+    <h4>Loading Images...</h4>
+</div>
+<!------------------------>
+
 <h1>Feature Visualisation</h1>
 
 <div class="paragraphs">
@@ -130,6 +147,19 @@
 
 
 <div id="filter_container">
+
+    <div class="flex_containter">
+        <div class="filter_block" id="block2_pool">
+            <h3>block2_pool</h3>
+            <!-- all divs will append here -->
+        </div>
+
+        <div class="viewer" id="viewer_block2">
+            <p class="viewer_filter_name" id="vfn_block2">Filter : NA</p>
+            <img id="viewer_img_block2" src="./images/block5_pool/block5_pool_filter_167.png" alt="">
+        </div>
+    </div>
+
 
     <div class="flex_containter">
         <div class="filter_block" id="block3_pool">
@@ -183,10 +213,13 @@
 </div>
 
 
-
-
-
 <!-- SCRIPTS -->
+<script>
+    $(window).load(function() {
+        $(".loader").fadeOut("slow");
+    });
+</script>
+
 <script>
 
     String.prototype.format = function() {
@@ -198,8 +231,27 @@
     }
 
 
+    // block2_pool
+    let target_div = document.getElementById("block2_pool");
+    for(var i=0; i < 128; i++) {
+
+        // Add new image to this div
+        let image = document.createElement('img');
+        image.src = "./images/block2_pool/block2_pool_filter_{0}.png".format(i);
+        image.id = "r" + i;
+        image.className = "tile";
+
+        target_div.appendChild(image);
+        //    Now add tooltip to div
+        let tooltip = document.createElement('h1');
+        tooltip.className = "tooltip";
+        tooltip.innerHTML = "Filter : {0}".format(i);
+        image.appendChild(tooltip);
+    }
+
+
     // block3_pool
-    let target_div = document.getElementById("block3_pool");
+    target_div = document.getElementById("block3_pool");
     for(var i=0; i < 256; i++) {
 
         // Add new image to this div
