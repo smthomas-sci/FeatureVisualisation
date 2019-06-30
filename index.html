@@ -132,6 +132,19 @@
 <div id="filter_container">
 
     <div class="flex_containter">
+        <div class="filter_block" id="block3_pool">
+            <h3>block3_pool</h3>
+            <!-- all divs will append here -->
+        </div>
+
+        <div class="viewer" id="viewer_block3">
+            <p class="viewer_filter_name" id="vfn_block3">Filter : NA</p>
+            <img id="viewer_img_block3" src="./images/block3_pool/block3_pool_filter_167.png" alt="">
+        </div>
+    </div>
+
+
+    <div class="flex_containter">
         <div class="filter_block" id="block4_pool">
             <h3>block4_pool</h3>
             <!-- all divs will append here -->
@@ -185,8 +198,26 @@
     }
 
 
+    // block3_pool
+    let target_div = document.getElementById("block3_pool");
+    for(var i=0; i < 256; i++) {
+
+        // Add new image to this div
+        let image = document.createElement('img');
+        image.src = "./images/block3_pool/block3_pool_filter_{0}.png".format(i);
+        image.id = "r" + i;
+        image.className = "tile";
+
+        target_div.appendChild(image);
+        //    Now add tooltip to div
+        let tooltip = document.createElement('h1');
+        tooltip.className = "tooltip";
+        tooltip.innerHTML = "Filter : {0}".format(i);
+        image.appendChild(tooltip);
+    }
+
     // block4_pool
-    let target_div = document.getElementById("block4_pool");
+    target_div = document.getElementById("block4_pool");
     for(var i=0; i < 512; i++){
 
         // Add new image to this div
