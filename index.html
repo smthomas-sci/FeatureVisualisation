@@ -49,7 +49,7 @@
             text-decoration: none;
         }
 
-        #viewer {
+        .viewer {
             position: sticky;
             top: 4rem;
             width: 224px;
@@ -60,7 +60,7 @@
             background: white;
         }
 
-        #viewer_filter_name {
+        .viewer_filter_name {
             margin: 0;
             padding: 0;
             text-align: left;
@@ -104,7 +104,6 @@
 
 <body>
 
-
 <h1>Feature Visualisation</h1>
 
 <div class="paragraphs">
@@ -125,7 +124,7 @@
         that we have for deep learning, focusing specifically on the straight-forward yet powerful VGG-16 network. The
         following are optimised input images for the 512 in the block5_pool layer.
     </p>
-    
+
 </div>
 
 
@@ -133,16 +132,32 @@
 <div id="filter_container">
 
     <div class="flex_containter">
+        <div class="filter_block" id="block4_pool">
+            <h3>block4_pool</h3>
+            <!-- all divs will append here -->
+        </div>
+
+        <div class="viewer" id="viewer_block4">
+            <p class="viewer_filter_name" id="vfn_block4">Filter : NA</p>
+            <img id="viewer_img_block4" src="./images/block4_pool/block4_pool_filter_167.png" alt="">
+        </div>
+    </div>
+
+
+    <div class="flex_containter">
         <div class="filter_block" id="block5_pool">
             <h3>block5_pool</h3>
             <!-- all divs will append here -->
         </div>
 
-        <div id="viewer">
-            <p id="viewer_filter_name">Filter : NA</p>
-            <img id="viewer_img" src="./images/block5_pool/block5_pool_filter_167.png" alt="">
+        <div class="viewer" id="viewer_block5">
+            <p class="viewer_filter_name" id="vfn_block5">Filter : NA</p>
+            <img id="viewer_img_block5" src="./images/block5_pool/block5_pool_filter_167.png" alt="">
         </div>
     </div>
+
+
+
 
 </div>
 
@@ -170,8 +185,26 @@
     }
 
 
-    //
-    let target_div = document.getElementById("block5_pool");
+    // block4_pool
+    let target_div = document.getElementById("block4_pool");
+    for(var i=0; i < 512; i++){
+
+        // Add new image to this div
+        let image = document.createElement('img');
+        image.src = "./images/block4_pool/block4_pool_filter_{0}.png".format(i);
+        image.id = "r" + i;
+        image.className = "tile";
+
+        target_div.appendChild(image);
+        //    Now add tooltip to div
+        let tooltip = document.createElement('h1');
+        tooltip.className = "tooltip";
+        tooltip.innerHTML = "Filter : {0}".format(i);
+        image.appendChild(tooltip);
+
+    }
+    // block5_pool
+    target_div = document.getElementById("block5_pool");
     for(var i=0; i < 512; i++){
 
         // Add new image to this div
@@ -179,8 +212,6 @@
         image.src = "./images/block5_pool/block5_pool_filter_{0}.png".format(i);
         image.id = "r" + i;
         image.className = "tile";
-        image.content = i;
-
 
         target_div.appendChild(image);
         //    Now add tooltip to div
@@ -199,10 +230,12 @@
 
         mouseenter: function() {
             var src = $(this).attr('src');
+            var block = src.split("/")[2].split("_")[0].substr(-1);
+            console.log(block);
             var i = $(this).attr('id').substring(1);
 
-            $("#viewer_img").prop("src", src);
-            $("#viewer_filter_name").text("Filter : " + i);
+            $("#viewer_img_block" + block).prop("src", src);
+            $("#vfn_block" + block).text("Filter : " + i);
         }
     })
 </script>
