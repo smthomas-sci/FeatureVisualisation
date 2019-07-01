@@ -78,7 +78,7 @@
             position: relative;
             width : 80px;
             left: 0px;
-            top: 22px;
+            top: 23px;
             background: grey;
             color: white;
             opacity: 0.9;
@@ -138,8 +138,8 @@
         researchers, culminating in my own <a href="https://github.com/smthomas-sci/FeatureVisualisation">FeatureVisualisation</a>
         module using Keras. In doing so I've discovered first-hand the challenges facing reproducibility, specifically
         the difficulty in transferring methods to other networks. In my case, I've kept to the narrow path of intuition
-        that we have for deep learning, focusing specifically on the straight-forward yet powerful VGG-16 network. The
-        following are optimised input images for the 512 in the block5_pool layer.
+        that we have for deep learning, focusing specifically on the straight-forward yet powerful VGG-16<sup><a href="#one">1</a></sup>
+        network. The following are optimised input images for the main pooling layers after two convolutional layers.
     </p>
 
 </div>
@@ -147,6 +147,19 @@
 
 
 <div id="filter_container">
+
+
+    <div class="flex_containter">
+        <div class="filter_block" id="block1_pool">
+            <h3>block1_pool</h3>
+            <!-- all divs will append here -->
+        </div>
+
+        <div class="viewer" id="viewer_block1">
+            <p class="viewer_filter_name" id="vfn_block1">Filter : NA</p>
+            <img id="viewer_img_block1" src="./images/block1_pool/block1_pool_filter_0.png" alt="">
+        </div>
+    </div>
 
     <div class="flex_containter">
         <div class="filter_block" id="block2_pool">
@@ -156,7 +169,7 @@
 
         <div class="viewer" id="viewer_block2">
             <p class="viewer_filter_name" id="vfn_block2">Filter : NA</p>
-            <img id="viewer_img_block2" src="./images/block5_pool/block5_pool_filter_167.png" alt="">
+            <img id="viewer_img_block2" src="./images/block2_pool/block2_pool_filter_0.png" alt="">
         </div>
     </div>
 
@@ -208,7 +221,7 @@
 <div class="paragraphs">
     <h3>References:</h3>
     <ol>
-        <li>Keras, VGG16</li>
+        <li id="one">Simonyan, K., & Zisserman, A. (2014). Very deep convolutional networks for large-scale image recognition. arXiv preprint arXiv:1409.1556.</li>
     </ol>
 </div>
 
@@ -230,9 +243,26 @@
         return a
     }
 
+    // block1_pool
+    let target_div = document.getElementById("block1_pool");
+    for(var i=0; i < 64; i++) {
+
+        // Add new image to this div
+        let image = document.createElement('img');
+        image.src = "./images/block1_pool/block1_pool_filter_{0}.png".format(i);
+        image.id = "r" + i;
+        image.className = "tile";
+
+        target_div.appendChild(image);
+        //    Now add tooltip to div
+        let tooltip = document.createElement('h1');
+        tooltip.className = "tooltip";
+        tooltip.innerHTML = "Filter : {0}".format(i);
+        image.appendChild(tooltip);
+    }
 
     // block2_pool
-    let target_div = document.getElementById("block2_pool");
+    target_div = document.getElementById("block2_pool");
     for(var i=0; i < 128; i++) {
 
         // Add new image to this div
@@ -318,9 +348,17 @@
             var i = $(this).attr('id').substring(1);
 
             $("#viewer_img_block" + block).prop("src", src);
-            $("#vfn_block" + block).text("Filter : " + i);
+            $("#vfn_block" + block).text("Filter : " + (Number(i)+1));
         }
     })
+</script>
+
+<script>
+    $(document).ready(function(){
+        $('#show').click(function() {
+            $('.menu').toggle("slide");
+        });
+    });
 </script>
 
 
