@@ -25,18 +25,20 @@
     <p>
         Feature Visualisation (or Filter Visualisation), is an interpretability method for understanding CNNs.
         It works by using gradient descent to iteratively generate an input image that maximises the output of a
-        given neuron(s). This methods has been widely studied since 2015, and although many would consider the problem
-        solved, a brief exploration of both formal and informal publications should raise most people's
-        suspicions of a reproducibility problem. Results vary depending on frameworks (Theano, Caffe, Tensorflow,
-        Keras and PyTorch) as well as network architectures (Inception V1-V3, ResNet-50, VGG16 etc).
+        given neuron(s). This method has been widely studied since 2015, and although many would consider the problem
+        solved, a brief exploration of the variety and variability in previous work should raise one's  suspicions of a
+        reproducibility problem.
 
     </p>
     <p>
-        In wanting to develop interpretability methods I've attempted to reproduce the work of various
-        researchers, culminating in my own <a href="https://github.com/smthomas-sci/FeatureVisualisation">FeatureVisualisation</a>
-        module using Keras. In doing so I've discovered first-hand the challenges facing reproducibility, specifically
+        In wanting to understand and contribute to the development of interpretability methods I've attempted to
+        reproduce the work of various researchers, particuarly the Google Brain Team
+        <sup class="reference">[<a href="#two">1</a>, <a href="#two">2</a>]</sup>.
+        This has culminated in my own <a href="https://github.com/smthomas-sci/FeatureVisualisation">FeatureVisualisation</a>
+        module using Keras. In doing so I've discovered first-hand the challenges of reproducibility, specifically
         the difficulty in transferring methods to other networks. In my case, I've kept to the narrow path of intuition
-        that we have for deep learning, focusing specifically on the straight-forward yet powerful VGG-16<sup><a href="#one">1</a></sup>
+        we have for deep learning, focusing specifically on the straight-forward yet powerful VGG-16
+        <sup class="reference">[ <a href="#three">3</a>]</sup>
         network. The following are optimised input images for the main pooling layers after two convolutional layers.
     </p>
 
@@ -110,16 +112,22 @@
         </div>
     </div>
 
-
-
-
 </div>
 
+<hr style="width: 80%;">
+<div id="regionActivations">
+    <h3>Optimal Region Activations</h3>
+    <div id="inputimage"></div>
+
+    <div id="dog_generated_viewer"></div>
+</div>
 
 <div class="paragraphs">
     <h3>References:</h3>
     <ol>
-        <li id="one">Simonyan, K., & Zisserman, A. (2014). Very deep convolutional networks for large-scale image recognition. arXiv preprint arXiv:1409.1556.</li>
+        <li id="one">Olah, C., Mordvintsev, A., & Schubert, L. (2017). Feature visualization. Distill, 2(11), e7.</li>
+        <li id="two">Olah, C., Satyanarayan, A., Johnson, I., Carter, S., Schubert, L., Ye, K., & Mordvintsev, A. (2018). The building blocks of interpretability. Distill, 3(3), e10.</li>
+        <li id="three">Simonyan, K., & Zisserman, A. (2014). Very deep convolutional networks for large-scale image recognition. arXiv preprint arXiv:1409.1556.</li>
     </ol>
 </div>
 
@@ -249,6 +257,42 @@
             $("#vfn_block" + block).text("Filter : " + (Number(i)+1));
         }
     })
+</script>
+
+
+<script>
+
+    target_div = document.getElementById("inputimage");
+    for(var i=0; i < 7; i++){
+        for (var j=0; j < 7; j++){
+            let tile = document.createElement('img');
+
+            tile.id = "(" + i + "," + j + ")";
+            tile.className = "dog_tile";
+            tile.src = "./images/dog/{0}_{1}_dog.png".format(i, j);
+            target_div.appendChild(tile);
+        }
+    }
+
+    
+</script>
+
+
+<script>
+    $(".dog_tile").on({
+
+            mouseenter:function(){
+                var location = $(this).attr('id');
+                var i = location.charAt(1);
+                var j = location.charAt(3);
+                console.log(location + " i = " + i + " j = " + j);
+
+                $("#dog_generated_viewer").css("background-image", "url(" + "./images/dog/{0}_{1}_dog.png".format(i, j) + ")");
+
+                // $("#vfn_block" + block).text("Filter : " + (Number(i)+1));
+            }
+        }
+    )
 </script>
 
 </body>

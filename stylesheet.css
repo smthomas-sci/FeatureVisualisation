@@ -43,8 +43,19 @@ code {
 
 }
 
-a:link {
+a:link, a:visited{
     text-decoration: none;
+    color: orangered;
+}
+
+a:hover, a:active {
+    color: blue;
+}
+
+
+.reference {
+    font-size: 12px;
+    color: orangered;
 }
 
 .viewer {
@@ -92,4 +103,39 @@ a:link {
     transform: scale(1.2);
     opacity: 1;
     border: solid orangered 2px;
+}
+
+
+.dog_tile {
+    padding: 0px;
+    width : 30px;
+    height: 30px;
+    display: inline-block;
+    background-color: white;
+    border: lightgrey solid 1px;
+    margin: 0px;
+    opacity: 0.5;
+}
+
+.dog_tile:hover {
+    opacity: 0;
+}
+
+#inputimage {
+    width : 224px;
+    font-size: 0px;
+    float: left;
+    background-image: url("./images/dog/dog.jpg");
+    background-size: cover;
+}
+
+#regionActivations {
+    display: inline-block;
+}
+
+#dog_generated_viewer {
+    width: 224px;
+    height : 224px;
+    background-color: green;
+    float: left;
 }
