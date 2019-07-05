@@ -106,7 +106,7 @@ a:hover, a:active {
 }
 
 
-.dog_tile {
+.dog_tile_1 {
     padding: 0px;
     width : 30px;
     height: 30px;
@@ -117,25 +117,69 @@ a:hover, a:active {
     opacity: 0.5;
 }
 
-.dog_tile:hover {
+
+.dog_tile_2 {
+    padding: 0px;
+    width : 14px;
+    height: 14px;
+    display: inline-block;
+    background-color: white;
+    border: lightgrey solid 1px;
+    margin: 0px;
+    opacity: 0.5;
+}
+
+
+.dog_tile_1:hover {
     opacity: 0;
 }
 
-#inputimage {
+.dog_tile_2:hover {
+    opacity: 0;
+}
+
+#inputimage_1 {
     width : 224px;
     font-size: 0px;
-    float: left;
     background-image: url("./images/dog/dog.jpg");
     background-size: cover;
+    display: inline-block;
+}
+
+#inputimage_2 {
+    width : 224px;
+    font-size: 0px;
+    background-image: url("./images/dog/dog.jpg");
+    background-size: cover;
+    display: inline-block;
 }
 
 #regionActivations {
     display: inline-block;
+    text-align: center;
 }
 
 #dog_generated_viewer {
     width: 224px;
     height : 224px;
-    background-color: green;
-    float: left;
+    background-color: darkgray;
+    display: inline-block;
+}
+
+#regionWrapper {
+    display: block;
+    margin: auto;
+}
+
+/* BAR CHART*/
+#contributions {
+    width : 224px;
+    height : 224px;
+    display: inline-block;
+}
+
+.bar {
+    fill: orangered;
+    transition: fill .3s ease;
+    font-family: Helvetica, sans-serif;
 }

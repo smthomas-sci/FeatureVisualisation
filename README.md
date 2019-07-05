@@ -1,4 +1,4 @@
-# FeatureVisualization
+# FeatureVisualisation
 A module to generate feature visualisations for Keras models
 
 **African Elephant:**

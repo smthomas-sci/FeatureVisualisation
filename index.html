@@ -23,7 +23,7 @@
 
 <div class="paragraphs">
     <p>
-        Feature Visualisation (or Filter Visualisation), is an interpretability method for understanding CNNs.
+        Feature Visualisation is an interpretability method for understanding CNNs.
         It works by using gradient descent to iteratively generate an input image that maximises the output of a
         given neuron(s). This method has been widely studied since 2015, and although many would consider the problem
         solved, a brief exploration of the variety and variability in previous work should raise one's  suspicions of a
@@ -39,12 +39,25 @@
         the difficulty in transferring methods to other networks. In my case, I've kept to the narrow path of intuition
         we have for deep learning, focusing specifically on the straight-forward yet powerful VGG-16
         <sup class="reference">[ <a href="#three">3</a>]</sup>
-        network. The following are optimised input images for the main pooling layers after two convolutional layers.
+        network.
     </p>
 
 </div>
 
 
+<hr style="width: 80%;">
+
+<h2>Filter Activations</h2>
+<img src="./images/supplementary/filters.png" width="224px">
+<div class="paragraphs">
+    <p>
+        The first point of call is visualising what the individual filters (or kernels) are detecting. The goal is to
+        split the output into its channels, and optimising input images that maximally activate a filter at a given layer.
+    </p>
+
+    <p>The following are optimised input images for the main pooling layers of VGG16. You can see the optimised input
+    images by hovering your mouse over them.</p>
+</div>
 
 <div id="filter_container">
 
@@ -116,18 +129,94 @@
 
 <hr style="width: 80%;">
 <div id="regionActivations">
-    <h3>Optimal Region Activations</h3>
-    <div id="inputimage"></div>
+    <h2>Region Activations</h2>
+    <img src="./images/supplementary/regions.png" width="224px">
+    <div class="paragraphs">
+        <p>Instead of looking at activations for individual channels, we can look at the activations across channels
+            for different regions of the image. For example, the output of block4_pool is 14×14×512, and we can localise the
+            features detected at region (1,1) by seeing which neurons were maximally activated. In this case, we find the
+            top-5 activations and then optimise an input image specifically for those particular filters. Additionally, the
+            loss weighed by their respective activation values, to indicate the relative presence of each feature. </p>
 
-    <div id="dog_generated_viewer"></div>
+    </div>
+
+    <div id="regionLabels">
+        <h3 style="display: inline-block; width: 224px;">block4_pool</h3>
+        <h3 style="display: inline-block; width: 224px;">block5_pool</h3>
+        <h3 style="display: inline-block; width: 224px;">Optimal Input</h3>
+        <h3 style="display: inline-block; width: 224px;">Filters & Relative Contributions</h3>
+    </div>
+
+    <div id="regionWrapper">
+        <div class="regionBlock" id="inputimage_2"></div>
+        <div class="regionBlock" id="inputimage_1"></div>
+        <div class="regionBlock" id="dog_generated_viewer"></div>
+
+        <svg class="regionBlock" id="contributions" width="224" height="224">
+            <g class="bar">
+                <text x="20" y="20" dy="18" fill="black">NA</text>
+                <rect x="50" y="20" width="10" height="25"></rect>
+            </g>
+
+            <g class="bar">
+                <text x="20" y="60" dy="18" fill="black">NA</text>
+                <rect x="50" y="60" width="10" height="25"></rect>
+            </g>
+
+            <g class="bar">
+                <text x="20" y="100" dy="18" fill="black">NA</text>
+                <rect x="50" y="100" width="10" height="25"></rect>
+            </g>
+
+            <g class="bar">
+                <text x="20" y="140" dy="18" fill="black">NA</text>
+                <rect x="50" y="140" width="10" height="25"></rect>
+            </g>
+
+            <g class="bar">
+                <text x="20" y="180" dy="18" fill="black">NA</text>
+                <rect x="50" y="180" width="10" height="25"></rect>
+            </g>
+        </svg>
+    </div>
+
+
+    <div class="paragraphs">
+        <p>Of course, each region of the image doesn't activate to the same degree. To demonstrate the overall differences
+        we can simply sum across all filters, and then assign this as an alpha channel to the image. As you can see below,
+        mainly the facial and fur regions are activated for both the block4_pool and block5_pool layers.</p>
+    </div>
+
+
+    <div id="regionRelative">
+        <div>
+            <h3 style="display: inline-block; width: 224px;">block4_pool</h3>
+            <h3 style="display: inline-block; width: 224px;">block5_pool</h3>
+        </div>
+        <div>
+            <div class="regionBlock" style="display: inline-block"><img src="./images/dog/block4/block4_alpha.png"></div>
+            <div class="regionBlock" style="display: inline-block"><img src="./images/dog/block5/block5_alpha.png"></div>
+        </div>
+    </div>
+
+
+
 </div>
+
+
+
+<!-- REFERENCES -->
+<hr style="width: 80%;">
 
 <div class="paragraphs">
     <h3>References:</h3>
     <ol>
-        <li id="one">Olah, C., Mordvintsev, A., & Schubert, L. (2017). Feature visualization. Distill, 2(11), e7.</li>
-        <li id="two">Olah, C., Satyanarayan, A., Johnson, I., Carter, S., Schubert, L., Ye, K., & Mordvintsev, A. (2018). The building blocks of interpretability. Distill, 3(3), e10.</li>
-        <li id="three">Simonyan, K., & Zisserman, A. (2014). Very deep convolutional networks for large-scale image recognition. arXiv preprint arXiv:1409.1556.</li>
+        <li id="one">Olah, C., Mordvintsev, A., & Schubert, L. (2017). Feature visualization. <a href="https://distill.pub/2017/feature-visualization/">Distill, 2(11), e7.</a></li>
+        <li id="two">Olah, C., Satyanarayan, A., Johnson, I., Carter, S., Schubert, L., Ye, K., & Mordvintsev, A. (2018). The building blocks of interpretability. <a href="https://distill.pub/2018/building-blocks/">Distill, 3(3), e10.</a></li>
+        <li id="three">Simonyan, K., & Zisserman, A. (2014). Very deep convolutional networks for large-scale image recognition. arXiv preprint <a href="https://arxiv.org/abs/1409.1556">arXiv:1409.1556.</a></li>
+        <li id="four">Graetz, F. M. (2019). How to visualize convolutional features in 40 lines of code. Available at <a href="https://towardsdatascience.com/how-to-visualize-convolutional-features-in-40-lines-of-code-70b7d87b0030">TowardsDataScience</a></li>
+        <li id="five">Nguyen, A., Yosinski, J., & Clune, J. (2016). Multifaceted feature visualization: Uncovering the different types of features learned by each neuron in deep neural networks. arXiv preprint <a href="https://arxiv.org/abs/1602.03616">arXiv:1602.03616.</a></li>
+        <li if="six">Non-Negative Matrix Factorization <a href="http://www.albertauyeung.com/post/python-matrix-factorization/">Link</a></li>
     </ol>
 </div>
 
@@ -244,6 +333,7 @@
 </script>
 
 <script>
+
     var orig_img = "./images/block5_pool/block5_pool_filter_167.png";
     $(".tile").on({
 
@@ -253,8 +343,9 @@
             console.log(block);
             var i = $(this).attr('id').substring(1);
 
+
             $("#viewer_img_block" + block).prop("src", src);
-            $("#vfn_block" + block).text("Filter : " + (Number(i)+1));
+            $("#vfn_block" + block).text("Filter : " + (Number(i)));
         }
     })
 </script>
@@ -262,34 +353,90 @@
 
 <script>
 
-    target_div = document.getElementById("inputimage");
+    target_div = document.getElementById("inputimage_1");
     for(var i=0; i < 7; i++){
         for (var j=0; j < 7; j++){
             let tile = document.createElement('img');
 
             tile.id = "(" + i + "," + j + ")";
-            tile.className = "dog_tile";
-            tile.src = "./images/dog/{0}_{1}_dog.png".format(i, j);
+            tile.className = "dog_tile_1";
+            tile.src = "./images/dog/block5/{0}_{1}_dog.png".format(i, j);
             target_div.appendChild(tile);
         }
     }
 
-    
+    target_div = document.getElementById("inputimage_2");
+    for(var i=0; i < 14; i++){
+        for (var j=0; j < 14; j++){
+            let tile = document.createElement('img');
+
+            tile.id = "(" + i + "," + j + ")";
+            tile.className = "dog_tile_2";
+            tile.src = "./images/dog/block4/{0}_{1}_dog_block4.png".format(i, j);
+            target_div.appendChild(tile);
+        }
+    }
+
+
 </script>
 
+<!-- LOAD JSON Data for histogram-->
+<script src="./images/dog/block4_data.js"></script>
+<script src="./images/dog/block5_data.js"></script>
 
 <script>
-    $(".dog_tile").on({
+
+    let arrSum = function(arr){
+        return arr.reduce(function(a,b){
+            return a + b
+        }, 0);
+    }
+
+    var updateBar = function(data, tile){
+        var contrib_div = $("#contributions").children();
+
+        // Get the key for the object
+        locations = tile.attr('id').split(",");
+        var i = locations[0].substring(1);
+        var j = locations[1].substring(0, locations[1].length-1);
+
+        // Update each histogram iteratively
+        var filters = data["({0}, {1})".format(i, j)];
+        for (var k = 0; k < 5; k++) {
+
+            // Select the kth element
+            var bar = contrib_div[k];
+
+            // Find respective width and filter index
+            var width = (filters["values"][k] / arrSum(filters["values"]) * 500) + "px";
+            var indx = "" + filters["indices"][k];
+            bar.getElementsByTagName("rect")[0].setAttribute("width", width);
+            bar.getElementsByTagName("text")[0].innerHTML = indx;
+
+        }
+    };
+
+    $(".dog_tile_1").on({
 
             mouseenter:function(){
                 var location = $(this).attr('id');
                 var i = location.charAt(1);
                 var j = location.charAt(3);
-                console.log(location + " i = " + i + " j = " + j);
+                $("#dog_generated_viewer").css("background-image", "url(" + "./images/dog/block5/{0}_{1}_dog.png".format(i, j) + ")");
+                updateBar(block5_data, $(this) );
+            }
+        }
+    )
 
-                $("#dog_generated_viewer").css("background-image", "url(" + "./images/dog/{0}_{1}_dog.png".format(i, j) + ")");
+    $(".dog_tile_2").on({
 
-                // $("#vfn_block" + block).text("Filter : " + (Number(i)+1));
+            mouseenter:function(){
+                var locations = $(this).attr('id').split("_")[0];
+                locations = locations.split(",");
+                var i = locations[0].substring(1);
+                var j = locations[1].substring(0, locations[1].length-1);
+                $("#dog_generated_viewer").css("background-image", "url(" + "./images/dog/block4/{0}_{1}_dog_block4.png".format(i, j) + ")");
+                updateBar(block4_data, $(this));
             }
         }
     )
