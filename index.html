@@ -199,6 +199,22 @@
         </div>
     </div>
 
+    <hr style="width: 80%;">
+
+    <h2>Group Activations</h2>
+    <img src="./images/supplementary/groups.png" width="224px">
+
+    <div class="paragraphs">
+        <p>Instead of just looking at the indivudal regions, we can look at how neurons interact in blocks. That is,
+        what larger concepts encompass more than one region? This can be achieved using Non-Negative Matrix Factorisation.
+        In this example, the number of factors (k) was picked arbitrarily. This results in k groupings, broken into
+            spatial features (k, 7, 7) and channel features (k, 512). We can visualise both of these separately, showing
+        localisations as well as optimal input images. The examples below are for block5_pool.</p>
+    </div>
+    <h3 style="display: block;"> k-Spatial Features</h3>
+    <div class="regionBlock" style="display: inline-block"><img src="./images/dog/factors.png"></div>
+    <h3 style="display: block;"> k-Channel Features</h3>
+    <div class="regionBlock" style="display: inline-block"><img src="./images/dog/concepts.png"></div>
 
 
 </div>
