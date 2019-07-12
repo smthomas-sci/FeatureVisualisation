@@ -117,7 +117,7 @@ class Visualizer(object):
         self._loss_is_set = True
         self.objective = "Objective - Layer(s) = " + str(layer_names) + " - neuron/filters(s) =  " + str(filter_idxs)
 
-    def optimize(self, max_iter=200, transforms=[], learning_rate=6000, verbose=True, maximize=True,
+    def optimize(self, max_iter=200, transforms=[], learning_rate=6000, verbose=True, fourier=False,
                  l2_lambda=0.0001, gradient_blur_sigma=0.1, image_dim=None, input_image=None):
         """
         Optimize for the pre-set loss. Raises exception if no loss function is set.
@@ -145,7 +145,11 @@ class Visualizer(object):
             dim = self.model.get_input_at(0).shape[1].value
             if dim == None:
                 dim = image_dim
-            input_img_data = np.random.random((1, dim, dim, 3))*20
+
+            if fourier:
+                input_img_data = fft_image((1, dim, dim, 3), sd=None, decay_power=1)[np.newaxis, ::]
+            else:
+                input_img_data = np.random.random((1, dim, dim, 3))*20
 
         print("Optimizing on loss objective...", self.objective)
 
@@ -156,8 +160,8 @@ class Visualizer(object):
             loss_value, gradients = self.feeder([input_img_data])
 
             # Change the grads until signal found
-            if np.sum(gradients) == 0:
-                gradients += np.random.random((1, dim, dim, 3))*50
+            #if np.sum(gradients) == 0:
+            #    gradients += np.random.random((1, dim, dim, 3))*50
 
             # Remove small gradients with L2
             gradients = gradients - l2_lambda * np.sqrt(np.sum(np.square(gradients)))
@@ -166,10 +170,7 @@ class Visualizer(object):
             gradients = gaussian(gradients[0], gradient_blur_sigma)[np.newaxis, ::]
 
             # Update input image
-            if maximize:
-                input_img_data += gradients * (learning_rate / np.mean(np.abs(gradients)))
-            else:
-                input_img_data -= gradients * (learning_rate / np.mean(np.abs(gradients)))
+            input_img_data += gradients * (learning_rate / np.mean(np.abs(gradients)))
 
             if verbose:
                 # Print progress

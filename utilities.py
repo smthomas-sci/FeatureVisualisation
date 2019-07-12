@@ -119,3 +119,42 @@ class ChannelReducer(object):
                     ]
 
     return list(ChannelReducer.__dict__.keys()) + list(self.__dict__.keys()) + dynamic_attrs
+
+
+
+def rfft2d_freqs(h, w):
+    """Computes 2D spectrum frequencies."""
+
+    fy = np.fft.fftfreq(h)[:, None]
+    # when we have an odd input dimension we need to keep one additional
+    # frequency and later cut off 1 pixel
+    if w % 2 == 1:
+        fx = np.fft.fftfreq(w)[:]
+    else:
+        fx = np.fft.fftfreq(w)[:]
+    return np.sqrt(fx * fx + fy * fy)
+
+def fft_image(shape, sd=None, decay_power=1):
+    """An image paramaterization using 2D Fourier coefficients."""
+
+    sd = sd or 0.01
+    batch, h, w, ch = shape
+    freqs = rfft2d_freqs(h, w)
+    init_val_size = (2, ch) + freqs.shape
+
+    # Randomise the values
+    init_val = np.random.normal(size=init_val_size, scale=sd).astype(np.float32)
+    # Compose of real and imaginary parts
+    spectrum_t = init_val[0] + init_val[1]*1j
+
+    # Scale the spectrum. First normalize energy, then scale by the square-root
+    # of the number of pixels to get a unitary transformation.
+    # This allows to use similar leanring rates to pixel-wise optimisation.
+    scale = 1.0 / np.maximum(freqs, 1.0 / max(w, h)) ** decay_power
+    scale *= np.sqrt(w * h)
+    scaled_spectrum_t = scale * spectrum_t
+
+    image_t = np.fft.ifft2(np.transpose(scaled_spectrum_t, (1, 2, 0))).real
+
+    return image_t # Magic constant
+
