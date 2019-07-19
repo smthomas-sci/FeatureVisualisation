@@ -25,3 +25,5 @@ A module to generate feature visualisations for Keras models
 
 ![Block 5 - Pooling - Filer 351](./examples/VGG16_block5_pool_filter_351.png)
 
+**Reproducibility Problems:**
+https://github.com/tensorflow/lucid/issues/61
