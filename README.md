@@ -1,6 +1,8 @@
 # FeatureVisualisation
 A module to generate feature visualisations for Keras models
 
+For a more complete example of what it can be used for [see my attempts to replicate the Google Brain Team](https://smthomas-sci.github.io/FeatureVisualisation/) papers from 2017/18. 
+
 **African Elephant:**
 
 ![Ouzel](./examples/elephant.gif)
