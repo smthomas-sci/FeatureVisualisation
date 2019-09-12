@@ -14,8 +14,8 @@ Date: 12th June, 2019
 
 """
 
-from .regularizers import *
-from .utilities import *
+from regularizers import *
+from utilities import *
 
 
 class Visualizer(object):
@@ -34,11 +34,9 @@ class Visualizer(object):
     def __repr__(self):
         return "Feature Visualizer - model: " + str(self.model.name)
 
-    def set_layer_filter(self, layer_names, filter_idxs, rows=None, cols=None, channels=None,  weights=[1.], regularizer=(L1, 0.1), activation=False):
+    def set_layer_filter(self, layer_names, filter_idxs, rows=None, cols=None, channels=None,  weights=[1.], regularizer=(L1, 0.1), activation=False, center_bias=True):
         """
         Sets the loss function to optimize
-
-        ATTENTION - MULTI-LOSS NOT TESTED
 
         Input:
             layer_name - layer name or list of layer name of model to measure
@@ -49,6 +47,7 @@ class Visualizer(object):
             weights - list of weights to balance a multi layered loss
             regularizer - Either L1 or L2 function with lambda as tuple. default (L1, 0.1)
             activation - whether to include the activation function. By default False to use logits
+            center_bias - to add center bias to the loss, default = True . seems to help avoid intial loss of 0.0
 
         """
         # Check for single term loss
@@ -105,6 +104,10 @@ class Visualizer(object):
 
                 loss -= func(loss_tensor, -_lambda)
 
+        # Centre-bias
+        if center_bias:
+            loss += K.sqrt(K.sum(K.square(self.model.get_input_at(0)[:, 30:-30, 30:-30, :])))
+        
         # Create backend function to get grads
         gradients = K.gradients(loss, self.model.get_input_at(0))[0]
         # Normalize gradients (a trick that makes it work!)
